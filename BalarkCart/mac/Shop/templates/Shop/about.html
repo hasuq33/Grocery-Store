@@ -1,0 +1,47 @@
+{% extends "Shop/basic.html" %}
+{% block tittle %}  About {% endblock %}
+{% block body %} 
+{% load static %} 
+<div class="container my-4">
+    <div class="row featurette d-flex justify-content-center align-items-center">
+      <div class="col-md-7">
+        <h2 class="featurette-heading fw-normal lh-1">Our Journey. <span class="text-body-secondary">We started our
+            journey in 2022.</span></h2>
+        <p class="lead">We started our service with aim to help to available all grocery items all acrross india. We started our journey from Kapadvanj.We stardet from small scale and now we are market leadar grocery store in india.</p>
+      </div>
+      <div class="col-md-5">
+        <img class="img-fluid" style="height: 225px; width: 445px;" src="{% static 'Shop/journey.jpg' %}" alt="">
+      </div>
+    </div>
+    <hr class="featurette-divider">
+    <div class="row featurette d-flex justify-content-center align-items-center">
+      <div class="col-md-7 order-md-2">
+        <h2 class="featurette-heading fw-normal lh-1">Market Leadar. <span class="text-body-secondary">We are working in
+            all technology.</span></h2>
+        <p class="lead">With 70% market share we are leadar in online grocery market. In india retail businees worth around <b>$ 1 Trillion dollor</b>. In this market Unorgnanize sector has 80% market share and other is for organized market. But with the digital revolution happens in india . Organize sector growth has huge potential in Idia. According to ibef.org ecommerce sector grown at the rate of 21.5%. We provide the best experience to the customer with insuring low damage item. </p>
+      </div>
+      <div class="col-md-5 order-md-1">
+        <img class="img-fluid" style="width: 445px; height: 225px;" src="{% static 'Shop/market_leadar.jpg' %}" alt="">
+      </div>
+    </div>
+    <hr class="featurette-divider">
+    <div class="row featurette d-flex justify-content-center align-items-center">
+      <div class="col-md-7">
+        <h2 class="featurette-heading fw-normal lh-1">Best place to work. <span class="text-body-secondary">One of the
+            largest emloyer of India.</span></h2>
+        <p class="lead">We are the one of the largest employer in India. We provide our developer as well as delivery man get same benifit in our company. We get the best award from Government of India.We give salary hike as per inflation rete. We train them for finiancial education. 
+        </p>
+      </div>
+      <div class="col-md-5">
+        <img class="img-fluid" src="{% static 'Shop/best_place_work.jpg' %}" alt="">
+      </div>
+    </div>
+    <hr class="featurette-divider">
+  </div>
+
+  <!-- Footer Starts from here -->
+  <footer class="container">
+    <p class="float-end"><a href="#">Back to top</a></p>
+    <p>© 2022-2023 <b style="color: rgb(36, 114, 36);"> grocery,Inc.</b>  <a href="#">Privacy</a> · <a href="#">Terms</a></p>
+  </footer>
+ {% endblock%}

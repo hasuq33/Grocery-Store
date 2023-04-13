@@ -1,0 +1,51 @@
+{% extends 'blog/base.html' %}
+{% block title %} Post Blog {% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-md-8 blog-main">
+            <h3 class="pb-4 mb-4 font-italic border-bottom">
+                Blogs From The Balark cart
+            </h3>
+
+            <div class="blog-post">
+                <h2 class="blog-post-title">{{post.title}}</h2>
+                <p class="blog-post-meta">{{post.pub_date}} by <a href="#">{{post.publisher}}</a> <div class="fb-like" data-href="http://127.0.0.1:8000/blog/blogpost/1" data-width="" data-layout="button_count" data-action="like" data-size="large" data-share="true"></div></p>
+                
+                <h2>{{post.head0}}</h2>
+                <p>{{post.chead0}}</p> <br>
+
+                <h2>{{post.head1}}</h2>
+                <p>{{post.chead1}}</p><br>
+                <h2>{{post.head1}}</h2>
+                <p>{{post.chead1}}</p>
+           
+                
+               
+            </div><!-- /.blog-post -->
+ 
+        </div><!-- /.blog-main -->
+
+        <aside class="col-md-4 blog-sidebar">
+            <div class="p-4 mb-3 bg-light rounded">
+                <h4 class="font-italic">About</h4>
+                <p class="mb-0">Balark Cart <em>started out as a small project and is now</em> the fastest growing e-commerce stores of all times in india and abroad.</p>
+            </div>
+
+           
+
+            <div class="p-4">
+                <h4 class="font-italic">Elsewhere</h4>
+                <ol class="list-unstyled">
+                    <li><a href="https://github.com/hasuq33">GitHub</a></li>
+                    <li><a href="https://twitter.com/HarshivJoshi1">Twitter</a></li>
+                    <li><a href="https://www.facebook.com/harshiv.joshi.73/">Facebook</a></li>
+                </ol>
+            </div>
+        </aside><!-- /.blog-sidebar -->
+
+    </div>
+</div>
+{% endblock %}
+
