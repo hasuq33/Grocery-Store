@@ -26,12 +26,12 @@
     <h2>Step-2 Enter The Address & Other Details:</h2>
     <form method="post" >
         {% csrf_token %}
-        <input type="hidden" name="itemsJson" id="itemsJson">
+        <input type="hidden" name="itemsJson" id="itemsJson" required>
         <input type="hidden" name="amount" id="amount">
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="inputname">Name</label>
-                <input type="text" class="form-control" id="name" placeholder="Name" name="name">
+                <input type="text" class="form-control" id="name" placeholder="Name" name="name" required tooltip="fill up Your name">
             </div>
             <div class="form-group col-md-6">
                 <label for="inputEmail4">Email</label>
@@ -44,7 +44,7 @@
         </div>
         <div class="form-group">
             <label for="inputAddress2">Address line 2</label>
-            <input type="text" class="form-control" id="address2" placeholder="Apartment, studio, or floor" name="address2">
+            <input type="text" class="form-control" id="address2" placeholder="Apartment, studio, or floor" name="address2" required>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">

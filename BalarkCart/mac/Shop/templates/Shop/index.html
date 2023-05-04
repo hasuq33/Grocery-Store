@@ -12,7 +12,7 @@
             }
 
           .col-md-3 img{
-          width: 170px;
+          width: 284px;
           height: 200px;
           }
 
@@ -41,6 +41,17 @@
            }
            .popover-body button {
          display: block;
+      }
+      .parent{
+        margin: 2px auto 3px auto;
+        position: relative;
+        height: 160px;
+        width: 241px;
+      }
+
+      .child{
+        position: absolute;
+        bottom: 0;
       }
 
           </style>
@@ -73,17 +84,21 @@
 
         {% for i in product %}
         <div class="col-xs-3 col-sm-3 col-md-3">
-          <div class="card align-items-center" style="width: 18rem; height: 435px;">
+          <div class="card align-items-center" style="width: 18rem; height: 435px; border: .5px solid black;">
             <img src='/media/{{i.image}}' class="card-img-top"   alt="...">
             <div class="card-body">
+              <div class="parent">
               <h5 class="card-title" class="my-4" id="namepr{{i.id}}"><span>{{i.product_name}}</span></h5>
               <!-- <p class="card-text">{{i.desc|truncatewords:5}}</p> -->
-              <h6 class="card-title"  >Rs. <span id="pricepr{{i.id}}">{{i.price}}</span></h6>
+              <div class="child"> 
+                <h6 class="card-title"  >Rs. <span id="pricepr{{i.id}}">{{i.price}}</span></h6>
+                <span id="divpr{{i.id}}" class="divpr">
+                <button id="pr{{i.id}}"  class="btn btn-primary cart">Add to Cart</button>
+              </span>
+                <a href="/shop/products/{{i.id}}"><button id="qv{{i.id}}"  class="btn btn-primary cart">Quick View</button></a>
+              </div>
+            </div>
               
-              <span id="divpr{{i.id}}" class="divpr">
-              <button id="pr{{i.id}}"  class="btn btn-primary cart">Add to Cart</button>
-            </span>
-              <a href="/shop/products/{{i.id}}"><button id="qv{{i.id}}"  class="btn btn-primary cart">Quick View</button></a>
             </div>
           </div>
         </div>
@@ -147,7 +162,7 @@ function updatePopover(cart){
     popStr = popStr + document.getElementById('name' + item).innerHTML.slice(0,19) + "... Qty: " + cart[item][0]+ '<br>';
     i= i+1;
   }  
-  popStr = popStr + "</div><div class='d-flex'><a href='/shop/checkout'> <button class='btn btn-primary mx-4 ' id ='checkout'>Checkout</button></a> <button class='btn btn-primary ~' onclick='clearCart()' id ='clearCart'>Clear Cart</button> </div>"; 
+  popStr = popStr + "</div><div class='d-flex'><a href='/shop/checkout'> <button class='btn btn-primary mx-4 ' id ='checkout'>Checkout</button></a> <button class='btn btn-primary ' onclick='clearCart()' id ='clearCart'>Clear Cart</button> </div>"; 
   document.getElementById("popcart").setAttribute('data-content', popStr);
   $('#popcart').popover('show');
 }

@@ -1,18 +1,16 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from .models import Product,Contact,Order,OrderUpdate,User
-# from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
 from math import ceil
 import json
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-# import the logging library
-import logging
-
-# Get an instance of a logger
-logger = logging.getLogger(__name__)
+from django.contrib.auth.forms import UserCreationForm
+from .forms import CreateUserForm
+from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.models import Group 
+from django.contrib.auth.decorators import login_required
+from .decoraters import unauthenticated_user,allowed_users
 
 def index(request):
     # products = Product.objects.all()
@@ -45,6 +43,7 @@ def contact(request):
 def about(request):
     return render(request,'Shop/about.html')
 
+@login_required(login_url='/shop/login/')
 def tracker(request):
     if request.method == "POST":
         email =request.POST.get('email')
@@ -57,24 +56,53 @@ def tracker(request):
 
                 for i in update:
                     updates.append({'text': i.update_desc , 'time': i.timestamp})
-                    response =  json.dumps([updates,orders[0].items_json], default=str)  
+                    response =  json.dumps({"status":"success","updates":updates,"items_json":orders[0].items_json },default=str)  
 
                 return HttpResponse(response) 
             
             else:
-              return HttpResponse('{}')
+              return HttpResponse('{"status":"No item found"}')
         except Exception as e:
-            return HttpResponse('{}') 
+            return HttpResponse('{"status":"Error"}') 
     return render(request,'Shop/tracker.html')
 
+# Serach page view function
 def search(request):
-    return render(request,'Shop/search.html')
+    query= request.GET.get('search')
+    allProds = []
+    catprods = Product.objects.values('category', 'id')
+    cats = {item['category'] for item in catprods}
+    for cat in cats:
+        prodtemp = Product.objects.filter(category=cat)
+        prod=[item for item in prodtemp if searchMatch(query, item)]
+        n = len(prod)
+        nSlides = n // 4 + ceil((n / 4) - (n // 4))
+        if len(prod)!= 0:
+            allProds.append([prod, range(1, nSlides), nSlides])
+    params = {'allProds': allProds, "msg":""}
+    if len(allProds)==0 or len(query)<4:
+        params={'msg':"Please make sure to enter relevant search query"}
+    return render(request, 'Shop/search.html', params)
 
+# Search query match function
+def searchMatch(query, item):
+    if query.lower() in item.product_name.lower() or query.lower() in item.category.lower():
+        return True
+    else:
+        return False
+   
+      
+
+
+# Product View page function
+@login_required(login_url='/shop/login/')
 def productview(request,myid):
     # We will fetch the product from model using id of product
     product = Product.objects.filter(id =myid)
-    return render(request,'Shop/prodView.html',{'product':product[0]})
+    return render(request,'Shop/prodView.html',{'i':product[0]})
 
+# Cart View page function
+@login_required(login_url='/shop/login/')
 def checkout(request):
     if request.method == "POST":
         items_json = request.POST.get('itemsJson')
@@ -94,71 +122,79 @@ def checkout(request):
         update.save()
         thank = True 
         id= order.order_id
+        param_dict = {
+
+                'MID': 'Your-Merchant-Id-Here',
+                'ORDER_ID': str(order.order_id),
+                'TXN_AMOUNT': str(amount),
+                'CUST_ID': email,
+                'INDUSTRY_TYPE_ID': 'Retail',
+                'WEBSITE': 'WEBSTAGING',
+                'CHANNEL_ID': 'WEB',
+                'CALLBACK_URL':'http://127.0.0.1:8000/shop/handlerequest/',
+
+        }
         return render(request,'Shop/checkout.html',{'thank':thank,'id':id})
         #  Request paytm to transfer the amount to your acoount after payment by user
     return render(request,'Shop/checkout.html')
 
-def login(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['psw']
 
-        if User.objects.filter(email = email).exists():
-            usr = authenticate(email = email, psw=password)
-    
-            if usr:
-                login(request,usr)
-                return redirect('table')
-            
-            return redirect('table')
-        
-        messages.info(request,'Please insert the correct password and email!')
 
-        return redirect('login')
-    
-    return render(request,'Shop/login.html')
+@login_required(login_url='/shop/login/')
+@allowed_users(allowed_roles=['Admin'])
+def registerProduct(request):
+    return render(request,'Shop/')
 
 
 
-def admin1(request):
-    if request.method == 'POST':
-        product_name = request.POST.get('product name')
-        category = request.POST.get('category')
-        subcategory = request.POST.get('subcategory')
-        price = request.POST.get('price')
-        desc = request.POST.get('desc')
-        image = request.POST.get('image')
-        date = request.POST.get('date')
-        product = Product(product_name=product_name, category = category , subcategory = subcategory , price=price, desc=desc, image = image ,pub_date=date )
-        product.save()
-
-    return render(request,'Shop/admin.html')
-
+@login_required(login_url='/shop/login/')
+@allowed_users(allowed_roles=['Admin'])
 def table(request):
    product = Product.objects.all()
    return render(request,'Shop/table.html',{'product':product})
 
-# def edit(request,product_id):
-#     product = Product.objects.get(id=product_id)
-#     if request.method == 'POST':
-#        product.product_name=  request.POST['product name']
-#        product.category = request.POST['category'] 
-#        product.subcategory =  request.POST['subcategory']
-#        product.price = request.POST['price']
-#        product.desc = request.POST['desc']
-#        product.image = request.POST['image']
-#        product.date = request.POST['date']
-#        product.save()
-#        return redirect('table')
-#     else:
-#        return render(request,'Shop/table.html',{'product':product})
-       
+@login_required(login_url='/shop/login/')
+@allowed_users(allowed_roles=['Admin'])
 def deleteProd(request,product_id):
     product = Product.objects.get(id=product_id)  
     product.delete()
     return redirect('table')
 
-@csrf_exempt
-def handlerequest(request):
-    # Paytm will send you post request here
-    pass
+
+
+# -------------------------Login Authentication system starts from her-------------#
+@unauthenticated_user
+def loginPage(request):  
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request,username=username,password=password)
+
+        if user is not None:
+            login(request,user)
+            return redirect('ShopeHome')
+        else:
+          messages.info(request,"Password or Username is Invalid!")
+
+    return render(request,'Shop/login.html')
+
+@unauthenticated_user
+def registerPage(request):
+    form = CreateUserForm()
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            group = Group.objects.get(name='Customer')
+            user.groups.add(group)
+            messages.success(request,username + ',You have successfully created account in BalarkCart!')
+            return redirect('loginPage')
+
+    context = {'form': form}
+    return render(request,'Shop/register.html',context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('loginPage')
